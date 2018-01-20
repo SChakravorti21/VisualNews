@@ -1,6 +1,7 @@
 import requests, json
-from datetime import date
+import datetime
 import pymongo
+from dateutil import parser
 
 class News(object):
 
@@ -38,7 +39,14 @@ class News(object):
 
         response = requests.get("{}/everything".format(url), params=params)
         data = json.loads(response.text)
-        News.make_news(data['articles'])
+        hour = datetime.datetime.now().hour
+
+        client = pymongo.MongoClient("mongodb://127.0.0.1:27017")
+        db = client['VisualNews']
+        collection = db['articles_{}'.format(hour)]
+        collection.remove({})
+        
+        News.make_news(data['articles'], hour)
 
         page += 1
         total_pages = int(data['totalResults']) / page_size
@@ -48,14 +56,17 @@ class News(object):
         while page < total_pages:
             response = requests.get("{}/everything".format(url), params=params)
             data = json.loads(response.text)
-            News.make_news(data['articles'])
+            News.make_news(data['articles'], hour)
             page += 1
+        
+        return hour
 
     @classmethod
-    def make_news(cls, articles):
+    def make_news(cls, articles, hour):
         client = pymongo.MongoClient("mongodb://127.0.0.1:27017")
         db = client['VisualNews']
-        collection = db['articles']
+
+        collection = db['articles_{}'.format(hour)]
 
         result_articles = []
 
@@ -63,7 +74,7 @@ class News(object):
             title = article['title'] if article['title'] is not None else ""
             description = article['description'] if article['description'] is not None else ""
             url = article['url']
-            date = article['publishedAt']
+            date = parser.parse(article['publishedAt']).isoformat()
             result_articles.append(cls(title, description, url, date))
 
         for article in result_articles:

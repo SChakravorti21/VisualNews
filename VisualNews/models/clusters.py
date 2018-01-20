@@ -115,13 +115,13 @@ class Cluster():
             return clusters
 
     @staticmethod
-    def make_clusters():
+    def make_clusters(hour):
         from pymongo import MongoClient
 
         client = MongoClient("mongodb://127.0.0.1:27017")
         db = client['VisualNews']
-        articles_collection = db['articles']
-        clusters_collection = db['clusters']
+        articles_collection = db['articles_{}'.format(hour)]
+        clusters_collection = db['clusters_{}'.format(hour)]
         clusters_collection.delete_many({})
 
         cursor = articles_collection.find({})
