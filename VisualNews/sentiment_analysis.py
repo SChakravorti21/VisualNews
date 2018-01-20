@@ -1,4 +1,4 @@
-import twitter
+import twitter, praw
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -6,6 +6,13 @@ api = twitter.Api(consumer_key="Ld3CmGVdyVLPL6gbzZHv5lxhN",
                     consumer_secret="T4q1RbVjosngsi3WMJxuqCQC66HKvlRdh4J2G5qiH1jMtJsEIq",
                     access_token_key="954621614922125312-yAn0jF9zTLmflhoADnrOj01wA9VhM1o",
                     access_token_secret="HY4XvWJ6uKKEOMeuWYohemVSIqPpKAuJcz83HsBv2huVg")
+
+reddit = praw.Reddit(client_id='fXu6e5Ofuroemg',
+                     client_secret='lEX8uGB1KHR3peMRql9BUHw9sKY',
+                     password='tdE-DQG-Pe2-bLZ',
+                     user_agent='sentimentbot for newsvisualizer',
+                     username='articlesentimentbot')
+news = reddit.subreddit('news')
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -60,4 +67,16 @@ def analyze_twitter_sentiment(kwds):
     print("{} / {} = {}".format(total, count, float(total / count)))
     return float(total / count)
 
-#analyze_twitter_sentiment(["government", "news", "trump", "death", "shutdown", "senate", "vote", "majority", "North Korea"])
+def analyze_reddit_sentiment(kwds):
+    for submission in news.hot(limit=1):
+        print(submission.title)
+        comments = submission.comments
+        i = 0
+        for comment in comments:
+            if i > 5:
+                break
+            print(comment.body)
+            i += 1
+        
+
+analyze_reddit_sentiment([])
