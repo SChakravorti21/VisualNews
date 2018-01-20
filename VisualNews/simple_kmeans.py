@@ -1,7 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.cluster import KMeans, MiniBatchKMeans
-from sentiment_analysis import get_text_similarity, analyze_twitter_sentiment
+from sentiment_analysis import get_text_similarity, analyze_twitter_sentiment, analyze_reddit_sentiment
 
 import logging, sys
 from optparse import OptionParser
@@ -27,12 +27,15 @@ class Cluster():
             "articles": self.articles,
             "twitter sentiment": self.twitter_sentiment,
             "reddit sentiment": self.reddit_sentiment,
-            "cluster_size": self.cluster_size,
+            "cluster size": self.cluster_size,
             "date": self.date
         }
 
     def set_twitter_sentiment(self):
         self.twitter_sentiment = analyze_twitter_sentiment(self.labels)
+
+    def set_reddit_sentiment(self):
+        self.reddit_sentiment = analyze_reddit_sentiment(self.labels)
 
     def set_cluster_size(self, docs):
         matches = 0
@@ -132,8 +135,9 @@ class Cluster():
         for cluster in results:
             # Uncomment these once these is the infrastructure to accomodate parsing large datasets
             # cluster.set_twitter_sentiment()
+            cluster.set_reddit_sentiment()
             t0 = time()
-            cluster.set_cluster_size(articles)
+            # cluster.set_cluster_size(articles)
             print('Set cluster size in %fs' % (time() - t0))
 
             # Get the relevant date for the cluster
