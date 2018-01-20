@@ -1,14 +1,48 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>VisualNews</title>
+    <meta charset="utf-8">
+    <title>Ocu News:</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/amcharts/plugins/export/export.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <script src="{{ url_for('static', filename='libs/amcharts/amcharts.js') }}"></script>
+    <script src="{{ url_for('static', filename='libs/amcharts/xy.js') }}"></script>
+    <script src="{{ url_for('static', filename='libs/amcharts/plugins/export/export.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='libs/amcharts/themes/dark.js') }}"></script>
+    <script src="{{ url_for('static', filename='libs/amcharts/plugins/dataloader/dataloader.min.js') }}" type="text/javascript"></script>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </head>
-<body>
-  <div class="container">
-    <div class="row">
-      <p class="lead">Here is the home page</p>
+<body onload="setup()">
+    <div id="chartdiv" style="width:80%;height:500px;"></div>
+    <div id="settings">
+        <div id="settings-heading">Settings</div>
+        <div class="setting">
+            <div class="setting-text">Begin:</div>
+            <div class="setting-value">50</div>
+            <input type="range" min="1" max="100" value="50" class="slider" id="slider-time-begin" oninput="updateSettingValue(this)">
+        </div>
+        <div class="setting">
+            <div class="setting-text">End:</div>
+            <div class="setting-value">50</div>
+            <input type="range" min="1" max="100" value="50" class="slider" id="slider-time-end" oninput="updateSettingValue(this)">
+        </div>
+        <div class="setting">
+            <div class="setting-text">Significance:</div>
+        </div>
     </div>
-  </div>
+    <div id="details" style="width:100%;background:blue;"></div>
+
+    <script>
+        function updateSettingValue(ele) {
+            ele.parentNode.children[1].innerHTML = ele.value;
+        }
+
+    </script>
 </body>
+
+

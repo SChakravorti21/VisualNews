@@ -1,0 +1,83 @@
+html, body {
+    font-family: "Verdana";
+    font-size: 14px;
+    background: #1c1c1c;
+    margin: 0px;
+    height: 100%;
+}
+
+#settings {
+    width: 20%;
+    height: 500px;
+    background: #282828;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    color: #e5e5e5;
+}
+
+
+#settings-heading {
+    margin: 5% 5% 0% 5%;
+    text-align: center;
+    padding: 3px 0px 6px 0px;
+    font-size: 17px;
+    border-radius: 5px 5px 0px 0px;
+    text-decoration: underline;
+}
+
+.setting {
+    position:relative;
+    margin: 0% 5% 0% 5%;
+    padding: 1% 5% 1% 5%;
+    display:inline-block;
+    width: 80%;
+    border-radius: 5px;
+}
+
+.setting-text {
+    display: inline-block;
+    float:left;
+    position:relative;
+}
+
+.setting-value {
+    display: inline-block;
+    float:right;
+    position:relative;   
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    display: block;
+    position:relative;
+    float:right;
+    height: 15px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius:5px;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #4CAF50;
+    cursor: pointer;
+}
