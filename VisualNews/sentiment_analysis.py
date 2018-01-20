@@ -2,10 +2,10 @@ import twitter, praw
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-api = twitter.Api(consumer_key="O5oPqSVZjupmdq8l0cbpJc5Zh",
-                    consumer_secret="rg5Q4LziheNVjqdVvMY8RBsasZXVuS3CShOwp408NH0Tf7CREd",
-                    access_token_key="954621614922125312-yAn0jF9zTLmflhoADnrOj01wA9VhM1o",
-                    access_token_secret="HY4XvWJ6uKKEOMeuWYohemVSIqPpKAuJcz83HsBv2huVg")
+api = twitter.Api(consumer_key="cTSVZ5bCdlVzu0Dd56066KA6R",
+                    consumer_secret="rL5HKcf8MjTjXTIxPWjX3byg2xuT2r4BXn62fbdg5kAHITccjw",
+                    access_token_key="890539760472739842-7OKzKVW79NCrDyK2YqvJ8Aw1ZcssVaK",
+                    access_token_secret="NEwH1FS73oJEG2SNb50sbbbqYRnNVLulJG0g96Aedq2mp")
 
 reddit = praw.Reddit(client_id='fXu6e5Ofuroemg',
                      client_secret='lEX8uGB1KHR3peMRql9BUHw9sKY',
@@ -44,6 +44,10 @@ def analyze_twitter_sentiment(kwds):
         for result in results:
             tweets.append(result.text)
 
+    count = 0.0
+    total = 0.0
+    multiplier = 1.0
+
     for tweet in tweets:
         doc_array = [tweet, kwd_list]
 
@@ -69,8 +73,9 @@ def make_twitter_queries(kwds):
     queries = []
 
     i = 0
-    while i < 6:
-        query = base_query + "{}%20OR%20{}?count=100".format(kwds[i], kwds[i+1])
+    while i < 10:
+        query = base_query + "{}%20OR%20{}&count=100".format(kwds[i], kwds[i+1])
+                #kwds[i+2], kwds[i+3], kwds[i+4])
         queries.append(query)
         i += 2
     
@@ -90,7 +95,7 @@ def analyze_reddit_sentiment(kwds):
         
         doc_array = [submission.title, kwd_list]
         similarity = get_text_similarity(doc_array=doc_array)
-        if similarity < .15:
+        if similarity < .1:
             continue
         else:
             print(submission.title)
@@ -112,4 +117,4 @@ def analyze_reddit_sentiment(kwds):
         print(float(total / count))
         return float(total / count)   
 
-#analyze_twitter_sentiment(["government", "shutdown", "Trump", "senate", "spending", "budget"])
+#analyze_twitter_sentiment(["government", "shutdown", "Trump", "senate", "budget", "midnight", "crisis", "McConnell", "vote", "funding"])
