@@ -17,7 +17,7 @@ news = reddit.subreddit('news')
 analyzer = SentimentIntensityAnalyzer()
 
 def get_text_similarity(doc_array=None, doc1="", doc2=""):
-    
+
     res = None
     vect = TfidfVectorizer(stop_words="english")
 
@@ -37,7 +37,7 @@ def analyze_twitter_sentiment(kwds):
 
     for kwd in kwds:
         kwd_list = kwd_list + "{} ".format(kwd)
-    
+
     queries = make_twitter_queries(kwds)
     for query in queries:
         results = api.GetSearch(raw_query=query)
@@ -78,7 +78,7 @@ def make_twitter_queries(kwds):
                 #kwds[i+2], kwds[i+3], kwds[i+4])
         queries.append(query)
         i += 2
-    
+
     return queries
 
 def analyze_reddit_sentiment(kwds):
@@ -92,32 +92,36 @@ def analyze_reddit_sentiment(kwds):
         kwd_list = kwd_list + "{} ".format(kwd)
 
     for submission in news.hot(limit=50):
-        
+
         doc_array = [submission.title, kwd_list]
         similarity = get_text_similarity(doc_array=doc_array)
-        if similarity < .1:
+        if similarity < .05:
             continue
         else:
+            from praw.models import MoreComments
             print(submission.title)
             multiplier = similarity / 0.1
             comments = submission.comments
             #comments.replace_more(limit=None)
             i = 0
-            while i < 25 and i < len(comments):
+            for comment in comments:
+                if i >= 25 or i >= len(comments.list()):
+                    break
+            # for i in range(len(comments)):
                 i += 1
-                if isinstance(comments[i], MoreComments):
+                if isinstance(comment, MoreComments):
                     continue
-                vs = analyzer.polarity_scores(comments[i].body)
+                vs = analyzer.polarity_scores(comment.body)
                 if vs['compound'] == 0.0:
                     continue
                 total += vs['compound'] * multiplier
                 count += 1
-    
+
     if total == 0.0:
         print("none")
         return None
     else:
         print(float(total / count))
-        return float(total / count)   
+        return float(total / count)
 
-analyze_reddit_sentiment(["government", "shutdown", "Trump", "senate", "budget", "midnight", "crisis", "McConnell", "vote", "funding"])
+#analyze_reddit_sentiment(["government", "shutdown", "Trump", "senate", "budget", "midnight", "crisis", "McConnell", "vote", "funding"])
