@@ -91,7 +91,7 @@ def analyze_reddit_sentiment(kwds):
     for kwd in kwds:
         kwd_list = kwd_list + "{} ".format(kwd)
 
-    for submission in news.hot(limit=25):
+    for submission in news.hot(limit=50):
         
         doc_array = [submission.title, kwd_list]
         similarity = get_text_similarity(doc_array=doc_array)
@@ -101,6 +101,7 @@ def analyze_reddit_sentiment(kwds):
             print(submission.title)
             multiplier = similarity / 0.1
             comments = submission.comments
+            comments.replace_more(limit=None)
             i = 0
             while i < 25 and i < len(comments):
                 i += 1
