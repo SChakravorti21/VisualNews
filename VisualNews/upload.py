@@ -1,0 +1,1 @@
+from VisualNews.models.news import News
