@@ -159,5 +159,3 @@ class Cluster():
             clusters_collection.insert_one(cluster.json())
 
         pprint.pprint(results[0].json())
-
-Cluster.make_clusters()
