@@ -8,8 +8,10 @@ from optparse import OptionParser
 from time import time
 import numpy as np
 import pprint, json
+from datetime import datetime, timedelta
+import dateutil.parser as dp
 
-class Cluster(object):
+class Cluster():
     def __init__(self, labels=[], articles=[], twitter_sentiment=0.0,
             reddit_sentiment=0.0, cluster_size=0):
         self.labels = labels
@@ -17,6 +19,7 @@ class Cluster(object):
         self.twitter_sentiment = twitter_sentiment
         self.reddit_sentiment = reddit_sentiment
         self.cluster_size = cluster_size
+        self.date = datetime.now()
 
     def json(self):
         return {
@@ -24,11 +27,22 @@ class Cluster(object):
             "articles": self.articles,
             "twitter sentiment": self.twitter_sentiment,
             "reddit sentiment": self.reddit_sentiment,
-            "cluster_size": self.cluster_size
+            "cluster_size": self.cluster_size,
+            "date": self.date
         }
 
     def set_twitter_sentiment(self):
         self.twitter_sentiment = analyze_twitter_sentiment(self.labels)
+
+    def set_cluster_size(self, docs):
+        matches = 0
+        words = ' '.join(self.labels)
+        print("Words: {}".format(words))
+        for article in docs:
+            sim = get_text_similarity(doc1=article, doc2=words)
+            matches += sim
+        self.cluster_size = matches
+
 
     @classmethod
     def simple_kmeans(cls, doc_array, true_k=30, n_features=100000, use_idf=True,
@@ -103,18 +117,47 @@ class Cluster(object):
 
         client = MongoClient("mongodb://127.0.0.1:27017")
         db = client['VisualNews']
-        collection = db['articles']
+        articles_collection = db['articles']
+        clusters_collection = db['clusters']
+        clusters_collection.delete_many({})
 
-        cursor = collection.find({})
+        cursor = articles_collection.find({})
         articles = []
 
         for doc in cursor:
-            articles.append(doc['title'] + " -- " + doc['description'])
+            articles.append(doc['title'] + " –– " + doc['description'])
 
         # Get the objects of clusters
         results = Cluster.simple_kmeans(articles)
         for cluster in results:
-            cluster.set_twitter_sentiment()
+            # Uncomment these once these is the infrastructure to accomodate parsing large datasets
+            # cluster.set_twitter_sentiment()
+            t0 = time()
+            cluster.set_cluster_size(articles)
+            print('Set cluster size in %fs' % (time() - t0))
+
+            # Get the relevant date for the cluster
+            t0 = time()
+            date = None
+            for article in cluster.articles:
+                split = article.split(' –– ')
+                title = split[0]
+                description = split[1]
+                # print('Title: {}; Description: {}'.format(title, description))
+                doc = articles_collection.find_one({'title': title, 'description': description})
+                parsed_time = dp.parse(doc['date'])
+                in_seconds = parsed_time.strftime('%s')
+
+                if date == None or in_seconds < date:
+                    date = in_seconds
+            cluster.date = date
+
+            print('Set cluster time in %fs' % (time() - t0))
+
             pprint.pprint(cluster.json())
+
+            clusters_collection.insert_one(cluster.json())
+
+        pprint.pprint(results[0].json())
 
 Cluster.make_clusters()
