@@ -72,7 +72,8 @@ def simple_kmeans(doc_array):
 
     if opts.minibatch:
         km = MiniBatchKMeans(n_clusters=true_k, init='k-means++', n_init=1,
-                             init_size=1000, batch_size=1000, verbose=opts.verbose)
+                             init_size=1000, batch_size=1000, verbose=opts.verbose,
+                             compute_labels=True)
     else:
         km = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1,
                     verbose=opts.verbose, compute_labels=True)
@@ -84,11 +85,24 @@ def simple_kmeans(doc_array):
     print()
 
     if not opts.use_hashing:
-        # print("Top terms per cluster:")
-
         order_centroids = km.cluster_centers_.argsort()[:, ::-1]
-        # print(km.labels_)
 
+        cluster_0 = (np.where(predicted_labels==0))[0]
+        X_cluster_0 = X[cluster_0]
+        print("X shape: {}".format(X.shape))
+        print("X Cluster shape: {}".format(X_cluster_0.shape))
+        print(cluster_0)
+        print(X_cluster_0)
+
+        articles_at_indices = []
+        for i in range(len(cluster_0)):
+            if(doc_array[cluster_0[i]] not in articles_at_indices):
+                articles_at_indices.append(doc_array[cluster_0[i]])
+
+        import pprint
+        pprint.pprint(articles_at_indices)
+
+        # Get the terms in each cluster
         terms = vectorizer.get_feature_names()
         result_labels = []
         for i in range(true_k):
