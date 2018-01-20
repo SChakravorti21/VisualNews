@@ -101,10 +101,12 @@ def analyze_reddit_sentiment(kwds):
             print(submission.title)
             multiplier = similarity / 0.1
             comments = submission.comments
-            comments.replace_more(limit=None)
+            #comments.replace_more(limit=None)
             i = 0
             while i < 25 and i < len(comments):
                 i += 1
+                if isinstance(comment[i], MoreComments):
+                    continue
                 vs = analyzer.polarity_scores(comments[i].body)
                 if vs['compound'] == 0.0:
                     continue
@@ -118,4 +120,4 @@ def analyze_reddit_sentiment(kwds):
         print(float(total / count))
         return float(total / count)   
 
-#analyze_twitter_sentiment(["government", "shutdown", "Trump", "senate", "budget", "midnight", "crisis", "McConnell", "vote", "funding"])
+analyze_reddit_sentiment(["government", "shutdown", "Trump", "senate", "budget", "midnight", "crisis", "McConnell", "vote", "funding"])
