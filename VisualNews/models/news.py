@@ -60,8 +60,8 @@ class News(object):
         result_articles = []
 
         for article in articles:
-            title = article['title']
-            description = article['description']
+            title = article['title'] if article['title'] is not None else ""
+            description = article['description'] if article['description'] is not None else ""
             url = article['url']
             date = article['publishedAt']
             result_articles.append(cls(title, description, url, date))
@@ -70,4 +70,4 @@ class News(object):
             collection.insert_one(article.json())
 
 
-News.getNews()
+#News.getNews()
