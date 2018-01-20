@@ -87,17 +87,21 @@ def simple_kmeans(doc_array):
     if not opts.use_hashing:
         order_centroids = km.cluster_centers_.argsort()[:, ::-1]
 
-        cluster_0 = (np.where(predicted_labels==0))[0]
-        X_cluster_0 = X[cluster_0]
-        print("X shape: {}".format(X.shape))
-        print("X Cluster shape: {}".format(X_cluster_0.shape))
-        print(cluster_0)
-        print(X_cluster_0)
+        # Aggregate the articles that fall within the same category
+        # articles_at_indices is a 2D array, each index holds a 1D array
+        # of related documents, corresponding the labels at the same index
+        # in result_labels
 
         articles_at_indices = []
-        for i in range(len(cluster_0)):
-            if(doc_array[cluster_0[i]] not in articles_at_indices):
-                articles_at_indices.append(doc_array[cluster_0[i]])
+        for k in range(true_k):
+            articles_at_indices.append([])
+
+            cluster = (np.where(predicted_labels==k))[0]
+            # X_cluster = X[cluster]
+
+            for i in range(len(cluster)):
+                if(doc_array[cluster[i]] not in articles_at_indices[k]):
+                    articles_at_indices[k].append(doc_array[cluster[i]])
 
         import pprint
         pprint.pprint(articles_at_indices)
@@ -111,7 +115,8 @@ def simple_kmeans(doc_array):
             for ind in order_centroids[i, :10]:
                 result_labels[i].append(terms[ind])
                 # print(' %s' % terms[ind], end='')
-        return result_labels
+
+        return (result_labels, articles_at_indices)
 
 
 def get_labels():
