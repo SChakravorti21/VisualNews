@@ -1,7 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.cluster import KMeans, MiniBatchKMeans
-from sentiment_analysis import get_text_similarity, analyze_twitter_sentiment, analyze_reddit_sentiment
+from VisualNews.sentiment_analysis import get_text_similarity, analyze_twitter_sentiment, analyze_reddit_sentiment
 
 import logging, sys
 from optparse import OptionParser

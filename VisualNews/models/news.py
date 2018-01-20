@@ -21,7 +21,7 @@ class News(object):
         }
 
     @staticmethod
-    def getNews():
+    def get_news():
         page_size = 100
         page = 1
 
