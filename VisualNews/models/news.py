@@ -1,6 +1,6 @@
 import requests, json
 from datetime import date
-from pymongo import MongoClient
+import pymongo
 
 class News(object):
 
@@ -10,7 +10,7 @@ class News(object):
         self.url = url
         self.date = date
         self.event = event
-
+    
     def json(self):
         return {
             "title": self.title,
@@ -32,13 +32,14 @@ class News(object):
             "from": date.today().isoformat(),
             "sources": "abc-news, bloomberg, cbs-news, politico, reuters, the-new-york-times, the-washington-post, nbc-news",
             "pageSize": page_size,
-            "page": page
+            "page": page,
+            "language": "en"
         }
 
         response = requests.get("{}/everything".format(url), params=params)
         data = json.loads(response.text)
         News.make_news(data['articles'])
-
+        
         page += 1
         total_pages = int(data['totalResults']) / page_size
 
@@ -52,10 +53,8 @@ class News(object):
 
     @classmethod
     def make_news(cls, articles):
-        from pymongo import MongoClient
-        client = MongoClient("mongodb://localhost:27017/")
-        db = client['VisualNews']
-        collection = db['articles']
+        client = MongoClient("mongodb://127.0.0.1:27017")
+        db = client['articles']
 
         result_articles = []
 
@@ -65,9 +64,9 @@ class News(object):
             url = article['url']
             date = article['publishedAt']
             result_articles.append(cls(title, description, url, date))
-
+        
         for article in result_articles:
-            collection.insert_one(article.json())
+            db.insert_one(article.json())
 
 
 News.getNews()
