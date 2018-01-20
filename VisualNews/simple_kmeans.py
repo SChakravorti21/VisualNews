@@ -1,139 +1,120 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-
 from sklearn.cluster import KMeans, MiniBatchKMeans
+from sentiment_analysis import get_text_similarity, analyze_twitter_sentiment
 
-import logging
+import logging, sys
 from optparse import OptionParser
-import sys
 from time import time
-
 import numpy as np
+import pprint, json
 
-def simple_kmeans(doc_array):
-    # Display progress logs on stdout
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(levelname)s %(message)s')
+class Cluster(object):
+    def __init__(self, labels=[], articles=[], twitter_sentiment=0.0,
+            reddit_sentiment=0.0, cluster_size=0):
+        self.labels = labels
+        self.articles = articles
+        self.twitter_sentiment = twitter_sentiment
+        self.reddit_sentiment = reddit_sentiment
+        self.cluster_size = cluster_size
 
-    # parse commandline arguments
-    op = OptionParser()
-    op.add_option("--lsa",
-                  dest="n_components", type=int,
-                  help="Preprocess documents with latent semantic analysis.")
-    op.add_option("--no-minibatch",
-                  action="store_false", dest="minibatch", default=True,
-                  help="Use ordinary k-means algorithm (in batch mode).")
-    op.add_option("--no-idf",
-                  action="store_false", dest="use_idf", default=True,
-                  help="Disable Inverse Document Frequency feature weighting.")
-    op.add_option("--use-hashing",
-                  action="store_true", default=False,
-                  help="Use a hashing feature vectorizer")
-    op.add_option("--n-features", type=int, default=100000,
-                  help="Maximum number of features (dimensions)"
-                       " to extract from text.")
-    op.add_option("--verbose",
-                  action="store_true", dest="verbose", default=False,
-                  help="Print progress reports inside k-means algorithm.")
+    def json(self):
+        return {
+            "labels": self.labels,
+            "articles": self.articles,
+            "twitter sentiment": self.twitter_sentiment,
+            "reddit sentiment": self.reddit_sentiment,
+            "cluster_size": self.cluster_size
+        }
 
-    print(__doc__)
-    op.print_help()
-    print()
+    def set_twitter_sentiment(self):
+        self.twitter_sentiment = analyze_twitter_sentiment(self.labels)
 
-    def is_interactive():
-        return not hasattr(sys.modules['__main__'], '__file__')
+    @classmethod
+    def simple_kmeans(cls, doc_array, true_k=30, n_features=100000, use_idf=True,
+                        verbose=False, minibatch=True, use_hashing=False):
+        # Create the Vectorizer to turn documents into numeric values
+        print("Extracting features from the training dataset using a sparse vectorizer")
+        t0 = time()
+        vectorizer = TfidfVectorizer(max_df=0.5, max_features=n_features,
+                                         min_df=2, stop_words='english',
+                                         use_idf=use_idf)
+        X = vectorizer.fit_transform(doc_array)
 
-    # work-around for Jupyter notebook and IPython console
-    argv = [] if is_interactive() else sys.argv[1:]
-    (opts, args) = op.parse_args(argv)
-    if len(args) > 0:
-        op.error("this script takes no arguments.")
-        sys.exit(1)
+        print("done in %fs" % (time() - t0))
+        print("n_samples: %d, n_features: %d" % X.shape)
+        print()
 
-    # #############################################################################
-    # Load some data from the training set
+        # #############################################################################
+        # Do the actual clustering
 
-    true_k = 30
+        if minibatch:
+            km = MiniBatchKMeans(n_clusters=true_k, init='k-means++', n_init=1,
+                                 init_size=1000, batch_size=1000, verbose=verbose,
+                                 compute_labels=True)
+        else:
+            km = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1,
+                        verbose=verbose, compute_labels=True)
 
-    print("Extracting features from the training dataset using a sparse vectorizer")
-    t0 = time()
-    vectorizer = TfidfVectorizer(max_df=0.5, max_features=opts.n_features,
-                                     min_df=2, stop_words='english',
-                                     use_idf=opts.use_idf)
-    X = vectorizer.fit_transform(doc_array)
+        print("Clustering sparse data with %s" % km)
+        t0 = time()
+        predicted_labels = km.fit_predict(X)
+        print("done in %0.3fs" % (time() - t0))
+        print()
 
-    print("done in %fs" % (time() - t0))
-    print("n_samples: %d, n_features: %d" % X.shape)
-    print()
+        if not use_hashing:
+            order_centroids = km.cluster_centers_.argsort()[:, ::-1]
 
+            # Aggregate the articles that fall within the same category
+            # articles_at_indices is a 2D array, each index holds a 1D array
+            # of related documents, corresponding the labels at the same index
+            # in result_labels
+            clusters = [] # List of Cluster objects to return
 
-    # #############################################################################
-    # Do the actual clustering
+            terms = vectorizer.get_feature_names()
+            result_labels = []
 
-    if opts.minibatch:
-        km = MiniBatchKMeans(n_clusters=true_k, init='k-means++', n_init=1,
-                             init_size=1000, batch_size=1000, verbose=opts.verbose,
-                             compute_labels=True)
-    else:
-        km = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1,
-                    verbose=opts.verbose, compute_labels=True)
+            articles_at_indices = []
+            for k in range(true_k):
+                articles_at_indices.append([]) # create new list for next set of articles
 
-    print("Clustering sparse data with %s" % km)
-    t0 = time()
-    predicted_labels = km.fit_predict(X)
-    print("done in %0.3fs" % (time() - t0))
-    print()
+                # Get the next cluster
+                current_cluster = (np.where(predicted_labels==k))[0]
+                # X_cluster = X[cluster]
 
-    if not opts.use_hashing:
-        order_centroids = km.cluster_centers_.argsort()[:, ::-1]
+                for j in range(len(current_cluster)):
+                    if(doc_array[current_cluster[j]] not in articles_at_indices[k]):
+                        articles_at_indices[k].append(doc_array[current_cluster[j]])
 
-        # Aggregate the articles that fall within the same category
-        # articles_at_indices is a 2D array, each index holds a 1D array
-        # of related documents, corresponding the labels at the same index
-        # in result_labels
+                result_labels.append([])
+                for ind in order_centroids[k, :10]:
+                    result_labels[k].append(terms[ind])
 
-        articles_at_indices = []
-        for k in range(true_k):
-            articles_at_indices.append([])
+                # Add the Cluster to the list
+                clusters.append(Cluster(labels=result_labels[k], articles=articles_at_indices[k]))
 
-            cluster = (np.where(predicted_labels==k))[0]
-            # X_cluster = X[cluster]
+            pprint.pprint(articles_at_indices)
 
-            for i in range(len(cluster)):
-                if(doc_array[cluster[i]] not in articles_at_indices[k]):
-                    articles_at_indices[k].append(doc_array[cluster[i]])
+            return clusters
 
-        import pprint
-        pprint.pprint(articles_at_indices)
+    @staticmethod
+    def make_clusters():
+        from pymongo import MongoClient
 
-        # Get the terms in each cluster
-        terms = vectorizer.get_feature_names()
-        result_labels = []
-        for i in range(true_k):
-            result_labels.append([])
-            # print("Cluster %d:" % i, end='')
-            for ind in order_centroids[i, :10]:
-                result_labels[i].append(terms[ind])
-                # print(' %s' % terms[ind], end='')
+        client = MongoClient("mongodb://127.0.0.1:27017")
+        db = client['VisualNews']
+        collection = db['articles']
 
-        return (result_labels, articles_at_indices)
+        cursor = collection.find({})
+        articles = []
 
+        for doc in cursor:
+            articles.append(doc['title'] + " -- " + doc['description'])
 
-def get_labels():
-    from pymongo import MongoClient
-    import pprint
+        # Get the objects of clusters
+        results = Cluster.simple_kmeans(articles)
+        for cluster in results:
+            cluster.set_twitter_sentiment()
+            pprint.pprint(cluster.json())
 
-    client = MongoClient("mongodb://127.0.0.1:27017")
-    db = client['VisualNews']
-    collection = db['articles']
-
-    cursor = collection.find({})
-    articles = []
-
-    for doc in cursor:
-        articles.append(doc['title'] + " -- " + doc['description'])
-
-    results = simple_kmeans(articles)
-    # pprint.pprint(results)
-
-get_labels()
+Cluster.make_clusters()
