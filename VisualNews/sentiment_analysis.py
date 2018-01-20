@@ -105,7 +105,7 @@ def analyze_reddit_sentiment(kwds):
             i = 0
             while i < 25 and i < len(comments):
                 i += 1
-                if isinstance(comment[i], MoreComments):
+                if isinstance(comments[i], MoreComments):
                     continue
                 vs = analyzer.polarity_scores(comments[i].body)
                 if vs['compound'] == 0.0:
