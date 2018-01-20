@@ -25,9 +25,9 @@ class Cluster():
         return {
             "labels": self.labels,
             "articles": self.articles,
-            "twitter sentiment": self.twitter_sentiment,
-            "reddit sentiment": self.reddit_sentiment,
-            "cluster size": self.cluster_size,
+            "twitter_sentiment": self.twitter_sentiment,
+            "reddit_sentiment": self.reddit_sentiment,
+            "cluster_size": self.cluster_size,
             "date": self.date
         }
 
