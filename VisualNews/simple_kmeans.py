@@ -72,7 +72,8 @@ def simple_kmeans(doc_array):
 
     if opts.minibatch:
         km = MiniBatchKMeans(n_clusters=true_k, init='k-means++', n_init=1,
-                             init_size=1000, batch_size=1000, verbose=opts.verbose)
+                             init_size=1000, batch_size=1000, verbose=opts.verbose,
+                             compute_labels=True)
     else:
         km = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1,
                     verbose=opts.verbose, compute_labels=True)
@@ -84,11 +85,28 @@ def simple_kmeans(doc_array):
     print()
 
     if not opts.use_hashing:
-        # print("Top terms per cluster:")
-
         order_centroids = km.cluster_centers_.argsort()[:, ::-1]
-        # print(km.labels_)
 
+        # Aggregate the articles that fall within the same category
+        # articles_at_indices is a 2D array, each index holds a 1D array
+        # of related documents, corresponding the labels at the same index
+        # in result_labels
+
+        articles_at_indices = []
+        for k in range(true_k):
+            articles_at_indices.append([])
+
+            cluster = (np.where(predicted_labels==k))[0]
+            # X_cluster = X[cluster]
+
+            for i in range(len(cluster)):
+                if(doc_array[cluster[i]] not in articles_at_indices[k]):
+                    articles_at_indices[k].append(doc_array[cluster[i]])
+
+        import pprint
+        pprint.pprint(articles_at_indices)
+
+        # Get the terms in each cluster
         terms = vectorizer.get_feature_names()
         result_labels = []
         for i in range(true_k):
@@ -97,7 +115,8 @@ def simple_kmeans(doc_array):
             for ind in order_centroids[i, :10]:
                 result_labels[i].append(terms[ind])
                 # print(' %s' % terms[ind], end='')
-        return result_labels
+
+        return (result_labels, articles_at_indices)
 
 
 def get_labels():
