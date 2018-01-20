@@ -24,30 +24,40 @@ def get_text_similarity(doc_array=None, doc1="", doc2=""):
     return res[0][1]
 
 def analyze_twitter_sentiment(kwds):
+    tweets =[]
 
     kwd_list = ""
-    query = "l=en&q="
+    base_query = "l=en&q="
     for kwd in kwds:
         kwd_list = kwd_list + "{} ".format(kwd)
-        query = query + "{}%20OR%20".format(kwd)
+        query = base_query + "{}&count=100".format(kwd)
+        print(query)
+        results = api.GetSearch(raw_query=query)
+        for result in results:
+            tweets.append(result.text)
 
-    query = query + "&count=100"
-    print(query)
-
-    tweets = api.GetSearch(raw_query=query)
     count = 0
     total = 0
+    multiplier = 1.0
 
     for tweet in tweets:
-        doc_array = [tweet.text, kwd_list]
-        if get_text_similarity(doc_array=doc_array) < 0.1:
+        doc_array = [tweet, kwd_list]
+
+        similarity = get_text_similarity(doc_array=doc_array)
+
+        if similarity < 0.1:
             continue
-        vs = analyzer.polarity_scores(tweet.text)
+
+        multiplier = similarity / 0.1
+        vs = analyzer.polarity_scores(tweet)
+
         if vs['compound'] == 0.0:
             continue
-        total = total + vs['compound']
+
+        total = total + vs['compound'] * multiplier
         count += 1
 
+    print("{} / {} = {}".format(total, count, float(total / count)))
     return float(total / count)
 
-analyze_twitter_sentiment(["government", "news", "trump", "19", "shutdown", "cbs", "senate", "vote", "majority", "president"])
+#analyze_twitter_sentiment(["government", "news", "trump", "death", "shutdown", "senate", "vote", "majority", "North Korea"])
