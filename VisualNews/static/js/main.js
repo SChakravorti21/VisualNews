@@ -1,5 +1,6 @@
 var chart;
 var arr;
+var data;
 
 function setup() {
   /*[ {
@@ -52,10 +53,20 @@ function setup() {
 	    "x2": -3,
 	    "value2": 16
 	  } ]);*/
+	data = {
+		"clusters": 20,
+		"begin": 1,
+		"end": 100,
+		"reddit": false,
+		"twitter": false,
+		"x": "time",
+		"y": "popularity", // popularity is reddit + twitter
+		"value": "size",
+	};
 	arr = [];
 	for (var i = 0; i < 50; i++)
 		arr.push({y: Math.random(), x: Math.random(), value: Math.random()}); 
-	load(arr);
+	display(arr);
 }
 
 function update() {
@@ -113,6 +124,14 @@ function display(data) {
 	});
 }
 
-function load(arr) {
-	display(arr);
+function load() {
+	$.getJSON("request-data", data, function (data, status) {
+		if (status === 200) {
+		    console.log(data);
+		    chart.dataProvider = AmCharts.parseJSON(data);
+		} else {
+		  	console.log("response was not 200");
+		}
+		update();
+	});
 }
