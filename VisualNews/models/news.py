@@ -1,5 +1,6 @@
 import requests, json
 from datetime import date
+import pymongo
 
 class News(object):
 
@@ -51,16 +52,20 @@ class News(object):
 
     @classmethod
     def make_news(cls, articles):
-        articles = []
+        client = MongoClient("mongodb://127.0.0.1:27017")
+        db = client['articles']
+
+        result_articles = []
 
         for article in articles:
             title = article['title']
             description = article['description']
             url = article['url']
             date = article['publishedAt']
-            articles.append(cls(title, description, url, date))
+            result_articles.append(cls(title, description, url, date))
         
-        print("success")
+        for article in result_articles:
+            db.insert_one(article.json())
 
 
 News.getNews()
