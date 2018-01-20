@@ -26,10 +26,10 @@ logging.basicConfig(level=logging.INFO,
 # parse commandline arguments
 op = OptionParser()
 op.add_option("--lsa",
-              dest="n_components", type="int",
+              dest="n_components", type=int,
               help="Preprocess documents with latent semantic analysis.")
 op.add_option("--no-minibatch",
-              action="store_false", dest="minibatch", default=False,
+              action="store_false", dest="minibatch", default=True,
               help="Use ordinary k-means algorithm (in batch mode).")
 op.add_option("--no-idf",
               action="store_false", dest="use_idf", default=True,
@@ -73,7 +73,7 @@ articles = []
 for doc in cursor:
     articles.append(doc['title'] + " -- " + doc['description'])
 
-true_k = 20
+true_k = 30
 
 print("Extracting features from the training dataset using a sparse vectorizer")
 t0 = time()
@@ -93,32 +93,11 @@ else:
     vectorizer = TfidfVectorizer(max_df=0.5, max_features=opts.n_features,
                                  min_df=2, stop_words='english',
                                  use_idf=opts.use_idf)
-# X = vectorizer.fit_transform(dataset.data)
 X = vectorizer.fit_transform(articles)
 
 print("done in %fs" % (time() - t0))
 print("n_samples: %d, n_features: %d" % X.shape)
 print()
-
-if opts.n_components:
-    print("Performing dimensionality reduction using LSA")
-    t0 = time()
-    # Vectorizer results are normalized, which makes KMeans behave as
-    # spherical k-means for better results. Since LSA/SVD results are
-    # not normalized, we have to redo the normalization.
-    svd = TruncatedSVD(opts.n_components)
-    normalizer = Normalizer(copy=False)
-    lsa = make_pipeline(svd, normalizer)
-
-    X = lsa.fit_transform(X)
-
-    print("done in %fs" % (time() - t0))
-
-    explained_variance = svd.explained_variance_ratio_.sum()
-    print("Explained variance of the SVD step: {}%".format(
-        int(explained_variance * 100)))
-
-    print()
 
 
 # #############################################################################
@@ -129,27 +108,27 @@ if opts.minibatch:
                          init_size=1000, batch_size=1000, verbose=opts.verbose)
 else:
     km = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1,
-                verbose=opts.verbose)
+                verbose=opts.verbose, compute_labels=True)
 
 print("Clustering sparse data with %s" % km)
 t0 = time()
-km.fit(X)
+predicted_labels = km.fit_predict(X)
 print("done in %0.3fs" % (time() - t0))
 print()
-
 
 if not opts.use_hashing:
     print("Top terms per cluster:")
 
     if opts.n_components:
         original_space_centroids = svd.inverse_transform(km.cluster_centers_)
-        order_centroids = original_space_centroids.argsort()[:, ::-1]
+        order_centroids = original_space_centroids.argsort()[:, ::]
     else:
         order_centroids = km.cluster_centers_.argsort()[:, ::-1]
+        print(km.labels_)
 
     terms = vectorizer.get_feature_names()
-    for i in range(true_k):
-        print("Cluster %d:" % i, end='')
-        for ind in order_centroids[i, :10]:
-            print(' %s' % terms[ind], end='')
-        print()
+    # for i in range(true_k):
+    #     print("Cluster %d:" % i, end='')
+    #     for ind in order_centroids[i, :10]:
+    #         print(' %s' % terms[ind], end='')
+    #     print()
