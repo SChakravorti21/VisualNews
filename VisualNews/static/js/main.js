@@ -2,6 +2,12 @@ var chart;
 var arr;
 var options;
 
+var xLabel = 'time';
+var yLabel = 'reddit sentiment';
+var valueLabel = 'cluster size';
+var balloonText = "";
+setBalloonText();
+
 function setup() {
   /*[ {
 	    "y": 10,
@@ -73,12 +79,23 @@ function update() {
 
 function updateXAxis(name) {
 	chart.valueAxes[0].title = name;
+	xLabel = name;
+	setBalloonText();
+	chart.graphs[0].balloonText = balloonText;
 	chart.validateNow();
 }
 
 function updateYAxis(name) {
 	chart.valueAxes[1].title = name;
+	yLabel = name;
+	setBalloonText();
+	chart.graphs[0].balloonText = balloonText;
 	chart.validateNow();
+}
+
+function setBalloonText() {
+	balloonText = "tags:<b>[[cluster_labels]]</b><br> _id:<b>[[_id]]</b><br> " + xLabel + ":<b>[[x]]</b><br> " + yLabel + 
+			":<b>[[y]]</b><br> " + valueLabel + ":<b>[[value]]</b><br> ";
 }
 
 function display(data) {
@@ -87,6 +104,7 @@ function display(data) {
 	  "theme": "dark",
 	  "balloon":{
 	  	"fixedPosition":true,
+			"maxWidth": 1000000
 	  },
 		// "dataLoader": {
 	  //   "url": "data.json",
@@ -108,7 +126,8 @@ function display(data) {
 			"titleFontSize": 12
 	  } ],
 	  "graphs": [ {
-	    "balloonText": "x:<b>[[x]]</b> y:<b>[[y]]</b><br>value:<b>[[value]]</b>",
+	    "balloonText": balloonText,
+			"balloonWidth": 40,
 	    "bullet": "circle",
 	    "bulletBorderAlpha": 0.2,
 	    "bulletAlpha": 0.8,
@@ -146,7 +165,7 @@ function display(data) {
 				$.get("get-cluster-data", request_args, function (data, status) {
 					if (status === 'success') {
 						data = JSON.parse(data);
-						console.log(data);
+						// console.log(data);
 						var info = {title:"", info:[], elements:[]};
 						if (data.articles != null)
 							for (var i = 0; i < data.articles.length; i++) {
@@ -162,23 +181,23 @@ function display(data) {
 						// if (data.date != null)
 						// 	info.info.push({label: "date", value: data.date});
 						if (data.cluster_size != null)
-							info.info.push({label: "cluster size", value: "Size: " + data.cluster_size});
+							info.info.push({label: "cluster size", value: "Size: " + (Math.round(data.cluster_size*100) / 100) });
 						if (data.reddit_sentiment != null)
-							info.info.push({label: "reddit sentiment", value: "Reddit: " + data.reddit_sentiment});
+							info.info.push({label: "reddit sentiment", value: "Reddit: " + (Math.round(data.reddit_sentiment*1000) / 1000)});
 						if (data.twitter_sentiment != null)
-							info.info.push({label: "twitter sentiment", value: "Twitter: " + data.twitter_sentiment});
+							info.info.push({label: "twitter sentiment", value: "Twitter: " + (Math.round(data.twitter_sentiment*1000) / 1000) });
 						if (data.labels != null) {
 							var str = "Tags: ";
-							for (var i = 0; i < 5; i++) // show first 5 tags
+							for (var i = 0; i < data.labels.length; i++) // show first 5 tags
 								str += data.labels[i] + ", ";
 							if (str.length != 0) {
-								str.substring(0, str.length - 2);
+								str = str.substring(0, str.length - 2);
 								info.info.push({label: "tags", value: str});
 							}
 						}
 
-						console.log("--- get cluster data: ---");
-						console.log(info);
+						// console.log("--- get cluster data: ---");
+						// console.log(info);
 						displayInfo(info);
 					} else {
 					  	console.log("response was not 200");
@@ -197,7 +216,7 @@ function display(data) {
 function load() {
 	$.get("request-data", options, function (data, status) {
 		if (status === 'success') {
-		    console.log(data);
+		    // console.log(data);
 		    chart.dataProvider = AmCharts.parseJSON(data);
 
 		} else {

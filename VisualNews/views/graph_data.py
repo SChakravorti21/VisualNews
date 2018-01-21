@@ -13,7 +13,7 @@ fake = Factory.create()
 @mod.route('/request-data/', methods=['GET', 'POST'])
 def get_clusters():
     args = request.args
-    num_clusters = args.get('num_clusters')
+    num_clusters = int(args.get('num_clusters'))
     start_time = int(args.get('start_time'))
     end_time = int(args.get('end_time'))
     x_axis = args.get('x-axis')
@@ -43,8 +43,11 @@ def get_clusters():
     cursor = cluster_collection.find({})
     for doc in cursor:
         
+        pprint(doc)
         clusters.append({
             "cluster_name": cluster_name,
+            "cluster_size": doc["cluster_size"],
+            "cluster_labels": doc["labels"],
             "_id": str(doc["_id"]),
             "y": doc[y_axis],
             "x": doc[x_axis],
@@ -61,6 +64,8 @@ def get_clusters():
             pprint(doc)
             clusters.append({
                 "cluster_name": cluster_name,
+                "cluster_size": doc["cluster_size"],
+                "cluster_labels": doc["labels"],
                 "_id": str(doc["_id"]),
                 "y": doc[y_axis],
                 "x": doc[x_axis],
@@ -68,7 +73,13 @@ def get_clusters():
                 "color": fake.hex_color()
             })
 
-    return json.dumps(clusters)
+    def sort_key(d):
+        return d['cluster_size']
+
+    print(num_clusters)
+    new_clusters = sorted(clusters, key=sort_key, reverse=True)
+
+    return json.dumps(new_clusters[:num_clusters])
 
 @mod.route('/get-cluster-data/', methods=['GET'])
 def get_cluster_data():
