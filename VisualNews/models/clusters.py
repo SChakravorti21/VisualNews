@@ -51,6 +51,7 @@ class Cluster():
     def simple_kmeans(cls, doc_array, true_k=30, n_features=100000, use_idf=True,
                         verbose=False, minibatch=True, use_hashing=False):
         # Create the Vectorizer to turn documents into numeric values
+        print(doc_array)
         print("Extracting features from the training dataset using a sparse vectorizer")
         t0 = time()
         vectorizer = TfidfVectorizer(max_df=0.5, max_features=n_features,
@@ -134,10 +135,10 @@ class Cluster():
         results = Cluster.simple_kmeans(articles)
         for cluster in results:
             # Uncomment these once these is the infrastructure to accomodate parsing large datasets
-            # cluster.set_twitter_sentiment()
+            cluster.set_twitter_sentiment()
             cluster.set_reddit_sentiment()
             t0 = time()
-            # cluster.set_cluster_size(articles)
+            cluster.set_cluster_size(articles)
             print('Set cluster size in %fs' % (time() - t0))
 
             # Get the relevant date for the cluster
