@@ -128,7 +128,32 @@ function display(data) {
 
 				$.get("get-cluster-data", request_args, function (data, status) {
 					if (status === 'success') {
-					    console.log(data);
+						var info = {title:"", info:[], elements:[]};
+						if (data.articles != null)
+							for (var i = 0; i < data.articles.length; i++) {
+								elements.push({title:data.articles[i], url: data.links[i]});
+								// TODO split title into title and description
+							}
+						if (data.date != null)
+							info.info.push({label: "date", value: data.date});
+						if (data.cluster_size != null)
+							info.info.push({label: "cluster size", value: data.cluster_size});
+						if (data.reddit_sentiment != null)
+							info.info.push({label: "reddit sentiment", value: data.reddit_sentiment});
+						if (data.twitter_sentiment != null)
+							info.info.push({label: "twitter sentiment", value: data.twitter_sentiment});
+						if (data.labels != null) {
+							var str = "";
+							for (var i = 0; i < data.labels.length; i++)
+								str += data.labels[i] + ", ";
+							if (str.length != 0) {
+								str.substring(0, str.length - 2);
+								info.info.push({label: "tags", value: str});
+							}
+						}
+						console.log("--- get cluster data: ---");
+						console.log(info);
+						displayInfo(info);
 					} else {
 					  	console.log("response was not 200");
 					}
