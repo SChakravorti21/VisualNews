@@ -2,10 +2,10 @@ import twitter, praw
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-api = twitter.Api(consumer_key="cTSVZ5bCdlVzu0Dd56066KA6R",
-                    consumer_secret="rL5HKcf8MjTjXTIxPWjX3byg2xuT2r4BXn62fbdg5kAHITccjw",
-                    access_token_key="890539760472739842-7OKzKVW79NCrDyK2YqvJ8Aw1ZcssVaK",
-                    access_token_secret="NEwH1FS73oJEG2SNb50sbbbqYRnNVLulJG0g96Aedq2mp")
+api = twitter.Api(consumer_key="KNMAMu8mH1EufzO2pwD7Erhkd",
+                    consumer_secret="SKkCvIpVpuSBpyX0jwhRCBAffyqturk2OUFIvYKZL49wonf9LK",
+                    access_token_key="2675842215-wx3eCPrPahmVlJIeticgmuUTVEtInvE9oRee5QM",
+                    access_token_secret="GVN0k87OQvgGQwPVbLNsXbqX779FlhVKJU5H5vD51DWSF")
 
 reddit = praw.Reddit(client_id='fXu6e5Ofuroemg',
                      client_secret='lEX8uGB1KHR3peMRql9BUHw9sKY',

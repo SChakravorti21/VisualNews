@@ -137,15 +137,17 @@ function display(data) {
 
 				$.get("get-cluster-data", request_args, function (data, status) {
 					if (status === 'success') {
-						console.log(data);
 						data = JSON.parse(data);
+						console.log(data);
 						var info = {title:"", info:[], elements:[]};
 						if (data.articles != null)
 							for (var i = 0; i < data.articles.length; i++) {
 								var s = data.articles[i];
-								var b = s.indexOf("--") > 0 ? s.indexOf("--") : s.length;
+								var b = s.indexOf("––") > 0 ? s.indexOf("––") : s.length;
 								var s1 = s.substring(0, b).trim();
 								var s2 = s.substring(b + 2).trim();
+								console.log(s1);
+								console.log(s2);
 								info.elements.push({title: s1, description: s2, url: data.links[i]});
 
 

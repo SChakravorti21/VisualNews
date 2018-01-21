@@ -44,7 +44,7 @@ html, body {
 .setting-value {
     display: inline-block;
     float:right;
-    position:relative;   
+    position:relative;
 }
 
 .slider {
@@ -120,6 +120,7 @@ html, body {
 
 .info-element-title {
     display: inline-block;
+    color: #9db9e2;
 }
 
 .info-element-title a {
@@ -134,4 +135,3 @@ html, body {
     padding-left: 3%;
     font-style: italic;
 }
-
