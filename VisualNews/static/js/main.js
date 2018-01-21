@@ -85,11 +85,17 @@ function display(data) {
   	"dataProvider": null,
 	  "valueAxes": [ {
 	    "position": "bottom",
-	    "axisAlpha": 0
+	    "axisAlpha": 0,
+			"title": "Time",
+			"titleColor": "#FFFFFF",
+			"titleFontSize": 12
 	  }, {
 	    "minMaxMultiplier": 1.2,
 	    "axisAlpha": 0,
-	    "position": "left"
+	    "position": "left",
+			"title": "Reddit Sentiment",
+			"titleColor": "#FFFFFF",
+			"titleFontSize": 12
 	  } ],
 	  "graphs": [ {
 	    "balloonText": "x:<b>[[x]]</b> y:<b>[[y]]</b><br>value:<b>[[value]]</b>",
@@ -120,6 +126,9 @@ function display(data) {
 			"event": "clickGraphItem",
 	    "method": function(event) {
 				var id = event.item.dataContext._id
+				chart.valueAxes[1].title = "Hello World"
+				chart.validateNow()
+
 				console.log(id);
 				request_args = {
 					"_id": id,
@@ -128,10 +137,12 @@ function display(data) {
 
 				$.get("get-cluster-data", request_args, function (data, status) {
 					if (status === 'success') {
+						console.log(data);
+						data = JSON.parse(data);
 						var info = {title:"", info:[], elements:[]};
 						if (data.articles != null)
 							for (var i = 0; i < data.articles.length; i++) {
-								elements.push({title:data.articles[i], url: data.links[i]});
+								info.elements.push({title:data.articles[i], url: data.links[i]});
 								// TODO split title into title and description
 							}
 						if (data.date != null)
@@ -151,6 +162,7 @@ function display(data) {
 								info.info.push({label: "tags", value: str});
 							}
 						}
+
 						console.log("--- get cluster data: ---");
 						console.log(info);
 						displayInfo(info);
