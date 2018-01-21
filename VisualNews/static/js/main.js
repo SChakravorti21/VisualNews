@@ -142,7 +142,13 @@ function display(data) {
 						var info = {title:"", info:[], elements:[]};
 						if (data.articles != null)
 							for (var i = 0; i < data.articles.length; i++) {
-								info.elements.push({title:data.articles[i], url: data.links[i]});
+								var s = data.articles[i];
+								var b = s.indexOf("--") > 0 ? s.indexOf("--") : s.length;
+								var s1 = s.substring(0, b).trim();
+								var s2 = s.substring(b + 2).trim();
+								info.elements.push({title: s1, description: s2, url: data.links[i]});
+
+
 								// TODO split title into title and description
 							}
 						if (data.date != null)

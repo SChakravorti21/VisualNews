@@ -96,8 +96,8 @@
                 <div class="info-element-component">description</div>
             </div>
             <div class="info-element">
-                <div class="info-element-title">Articxle 4</div>
-                <div class="info-element-component">description</div>
+                <div class="info-element-title">Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4Articxle 4</div>
+                <div class="info-element-component">description description description description description description description description description description description description description description description description description description description description description description description description description description description description description </div>
             </div>
             <div class="info-element">
                 <div class="info-element-title">Artiq13142114324123cle 5</div>
@@ -141,12 +141,15 @@
                 for (var i = 0; i < info.elements.length; i++) {
                     var e = document.createElement("div");
                     e.classList.add("info-element");
-                    if (info.elements[i].title != null) {
-                        var e1 = document.createElement("div");
-                        e1.classList.add("info-element-title");
-                        e1.innerHTML = info.elements[i].title;
-                        e.appendChild(e1);
-                    }
+                    var e1 = document.createElement("div");
+                    e1.classList.add("info-element-title");
+                    var e2 = document.createElement("a");
+                    if (info.elements[i].title != null)
+                        e2.innerHTML = info.elements[i].title;
+                    if (info.elements[i].url != null)
+                        e2.href = info.elements[i].url;
+                    e1.appendChild(e2);
+                    e.appendChild(e1);
                     if (info.elements[i].description != null) {
                         var e1 = document.createElement("div");
                         e1.classList.add("info-element-component");
