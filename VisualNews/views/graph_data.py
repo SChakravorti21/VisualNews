@@ -21,13 +21,13 @@ def get_clusters():
 
     curr = datetime.datetime.now().hour
 
-    start_time = curr - start_time
+    start_time = curr + start_time
     if start_time < 0:
         start_time = 24 + start_time
     print("\n\n\n\n\n\n")
     print("start_time: {}".format(start_time))
 
-    end_time = curr - end_time
+    end_time = curr + end_time
     if end_time < 0:
         end_time = 24 + end_time
 
