@@ -5,8 +5,8 @@ from VisualNews.models.clusters import Cluster
 
 def load_data():
     print("Running")
-    News.get_news()
-    Cluster.make_clusters()
+    hour = News.get_news()
+    Cluster.make_clusters(hour)
 
 def test():
     print("Running")

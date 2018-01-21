@@ -30,7 +30,7 @@ class News(object):
 
         params = {
             "apikey": "fcf49cf01bcc423bbb85a8473da889cf",
-            "from": "2018-01-18T00:00:00-05:00",
+            "from": datetime.date.today().isoformat(),
             "sources": "abc-news, bloomberg, cbs-news, politico, reuters, the-new-york-times, the-washington-post, nbc-news",
             "pageSize": page_size,
             "page": page,
@@ -45,7 +45,7 @@ class News(object):
         db = client['VisualNews']
         collection = db['articles_{}'.format(hour)]
         collection.remove({})
-        
+
         News.make_news(data['articles'], hour)
 
         page += 1
@@ -58,7 +58,7 @@ class News(object):
             data = json.loads(response.text)
             News.make_news(data['articles'], hour)
             page += 1
-        
+
         return hour
 
     @classmethod
