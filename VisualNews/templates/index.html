@@ -24,11 +24,11 @@
     <div id="settings">
         <div id="settings-heading">Settings</div>
         <div class="setting">
-            <div class="setting-text">Start Time:</div>
+            <div class="setting-text" id="start-time">Start Time:</div>
             <div class="setting-value">0</div>
             <input type="range" min="-24" max="0" value="0" class="slider" id="slider-time-begin" oninput="updateSettingValue(this)" onchange="sendForm(this)">
         </div>
-        <div class="setting">
+        <div class="setting" id="end-time">
             <div class="setting-text">End Time:</div>
             <div class="setting-value">0</div>
             <input type="range" min="-24" max="0" value="0" class="slider" id="slider-time-end" oninput="updateSettingValue(this)" onchange="sendForm(this)">
@@ -38,14 +38,6 @@
             <div class="setting-value">20</div>
             <input type="range" min="0" max="30" value="20" class="slider" id="slider-time-end" oninput="updateSettingValue(this)" onchange="sendForm(this)">
         </div>
-<!--         <div class="setting">
-            <div class="setting-text">Reddit Only:</div>
-            <input type="checkbox" style="float:right;" onchange="sendForm(this)">
-        </div>
-        <div class="setting">
-            <div class="setting-text">Twitter Only:</div>
-            <input type="checkbox" style="float:right;" onchange="sendForm(this)">
-        </div> -->
         <div class="setting">
             <div class="setting-text">x-axis:</div>
             <select name="x-axis" style="float:right;" onchange="sendForm(this)">
@@ -93,12 +85,26 @@
                 "y-axis:": "y-axis",
                 "Size:": "value"
             };
-            var i = index[ele.parentNode.children[0].innerHTML];
+            var i = ele.parentNode.children[0].innerHTML;
+            i = index[i];
             options[i] = ele.value;
             if (i == "x-axis")
-                updateXAxis(ele.value);
+                updateXAxis(i.substring(0, i.length - 1));
             if (i == "y-axis")
-                updateYAxis(ele.value);
+                updateYAxis(i);
+            if (i == "start_time") {
+                var e = document.getElementById("end-time");
+                if (ele.value > e.children[1].innerHTML)
+                    e.children[1].innerHTML = ele.value;
+                e.children[2].min = ele.value;
+            }
+            if (i == "end_time") {
+                var e = document.getElementById("start-time");
+                if (ele.value < e.children[1].innerHTML)
+                    e.children[1].innerHTML = ele.value;
+                e.children[2].max = ele.value;
+            }
+
             load();
         }
 
