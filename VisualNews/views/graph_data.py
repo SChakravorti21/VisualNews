@@ -52,7 +52,7 @@ def get_clusters():
             "y": doc[y_axis],
             "x": doc[x_axis],
             "value": doc[value],
-            "color": fake.hex_color()
+            "color": str(fake.hex_color())
         })
 
     while start_time != end_time:
@@ -70,7 +70,7 @@ def get_clusters():
                 "y": doc[y_axis],
                 "x": doc[x_axis],
                 "value": doc[value],
-                "color": fake.hex_color()
+                "color": str(fake.hex_color())
             })
 
     def sort_key(d):
