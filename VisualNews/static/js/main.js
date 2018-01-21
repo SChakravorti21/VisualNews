@@ -71,6 +71,16 @@ function update() {
 	chart.validateData();
 }
 
+function updateXAxis(name) {
+	chart.valueAxes[0].title = name;
+	chart.validateNow();
+}
+
+function updateYAxis(name) {
+	chart.valueAxes[1].title = name;
+	chart.validateNow();
+}
+
 function display(data) {
 	chart = AmCharts.makeChart( "chartdiv", {
 	  "type": "xy",
@@ -126,8 +136,6 @@ function display(data) {
 			"event": "clickGraphItem",
 	    "method": function(event) {
 				var id = event.item.dataContext._id
-				chart.valueAxes[1].title = "Hello World"
-				chart.validateNow()
 
 				console.log(id);
 				request_args = {
