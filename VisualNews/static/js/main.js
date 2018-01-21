@@ -1,6 +1,6 @@
 var chart;
 var arr;
-var data;
+var options;
 
 function setup() {
   /*[ {
@@ -53,17 +53,17 @@ function setup() {
 	    "x2": -3,
 	    "value2": 16
 	  } ]);*/
-	data = {
+	options = {
 		"num_clusters": 20,
-		"start_time": 1,
-		"end_time": 100,
-		"x-axis": "time",
+		"start_time": 0,
+		"end_time": 0,
+		"x-axis": "date",
 		"y-axis": "reddit_sentiment", // popularity is reddit + twitter
 		"value": "cluster_size",
 	};
 	arr = [];
 	for (var i = 0; i < 50; i++)
-		arr.push({y: Math.random(), x: Math.random(), value: Math.random()}); 
+		arr.push({y: Math.random(), x: Math.random(), value: Math.random()});
 	display(arr);
 }
 
@@ -79,10 +79,10 @@ function display(data) {
 	  	"fixedPosition":true,
 	  },
 		// "dataLoader": {
-	 //    "url": "data.json",
-	 //    "format": "json"
-  // 	},
-  	"dataProvider": arr,
+	  //   "url": "data.json",
+	  //   "format": "json"
+  	// },
+  	"dataProvider": null,
 	  "valueAxes": [ {
 	    "position": "bottom",
 	    "axisAlpha": 0
@@ -120,13 +120,16 @@ function display(data) {
 	    "enabled": true
 	  }
 	});
+
+	load()
 }
 
 function load() {
-	$.getJSON("request-data", data, function (data, status) {
-		if (status === 200) {
+	$.get("request-data", options, function (data, status) {
+		if (status === 'success') {
 		    console.log(data);
 		    chart.dataProvider = AmCharts.parseJSON(data);
+
 		} else {
 		  	console.log("response was not 200");
 		}

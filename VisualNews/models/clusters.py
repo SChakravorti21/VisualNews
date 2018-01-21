@@ -137,10 +137,10 @@ class Cluster():
         results = Cluster.simple_kmeans(articles)
         for cluster in results:
             # Uncomment these once these is the infrastructure to accomodate parsing large datasets
-            # cluster.set_twitter_sentiment()
-            # cluster.set_reddit_sentiment()
+            cluster.set_twitter_sentiment()
+            cluster.set_reddit_sentiment()
             t0 = time()
-            # cluster.set_cluster_size(articles)
+            cluster.set_cluster_size(articles)
             print('Set cluster size in %fs' % (time() - t0))
 
             # Get the relevant date for the cluster

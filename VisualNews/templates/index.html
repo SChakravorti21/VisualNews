@@ -16,7 +16,7 @@
     <script src="{{ url_for('static', filename='libs/amcharts/plugins/dataloader/dataloader.min.js') }}" type="text/javascript"></script>
 
     <script src="{{ url_for('static', filename='libs/jquery-3.3.1.min.js') }}"></script>
-    
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </head>
 <body onload="setup()">
@@ -49,7 +49,7 @@
         <div class="setting">
             <div class="setting-text">x-axis:</div>
             <select name="x-axis" style="float:right;" onchange="sendForm(this)">
-                <option value="time" selected>Time</option>
+                <option value="date" selected>Time</option>
                 <option value="reddit_sentiment">Reddit Sentiment</option>
                 <option value="twitter_sentiment">Twitter Sentiment</option>
                 <option value="cluster_size">Cluster Size</option>
@@ -58,7 +58,7 @@
         <div class="setting">
             <div class="setting-text">y-axis:</div>
             <select name="y-axis" style="float:right;" onchange="sendForm(this)">
-                <option value="time">Time</option>
+                <option value="date">Time</option>
                 <option value="reddit_sentiment" selected>Reddit Sentiment</option>
                 <option value="twitter_sentiment">Twitter Sentiment</option>
                 <option value="cluster_size">Cluster Size</option>
@@ -67,7 +67,7 @@
         <div class="setting">
             <div class="setting-text">Size:</div>
             <select name="size" style="float:right;" onchange="sendForm(this)">
-                <option value="time">Time</option>
+                <option value="date">Time</option>
                 <option value="reddit_sentiment">Reddit Sentiment</option>
                 <option value="twitter_sentiment">Twitter Sentiment</option>
                 <option value="cluster_size" selected>Cluster Size</option>
@@ -90,12 +90,10 @@
                 "y-axis:": "y-axis",
                 "Size:": "value"
             };
-            data[index[ele.parentNode.children[0].innerHTML]] = ele.value;
+            options[index[ele.parentNode.children[0].innerHTML]] = ele.value;
             console.log(ele.value);
-            console.log(data);
+            console.log(options);
             load();
         }
     </script>
 </body>
-
-
