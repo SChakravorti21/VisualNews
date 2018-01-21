@@ -2,22 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Ocu News:</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>def news:</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='libs/amcharts/plugins/export/export.css') }}" type="text/css" media="all" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="../static/css/main.css">
 
-    <script src="{{ url_for('static', filename='libs/amcharts/amcharts.js') }}"></script>
-    <script src="{{ url_for('static', filename='libs/amcharts/xy.js') }}"></script>
-    <script src="{{ url_for('static', filename='libs/amcharts/plugins/export/export.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='libs/amcharts/themes/dark.js') }}"></script>
-    <script src="{{ url_for('static', filename='libs/amcharts/plugins/dataloader/dataloader.min.js') }}" type="text/javascript"></script>
-
-    <script src="{{ url_for('static', filename='libs/jquery-3.3.1.min.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/xy.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
+    <script src="../static/amcharts/plugins/dataloader/dataloader.min.js" type="text/javascript"></script>
+    
+    <script src="../static/js/main.js"></script>
 </head>
 <body onload="setup()">
     <div id="chartdiv" style="width:80%;height:500px;"></div>
@@ -77,6 +74,10 @@
     <div id="info">
         <div id="info-title">
             Title
+            <div class="info-title-component" title="hello">one</div>
+            <div class="info-title-component">two, 12, werlij, xvcoi, ak</div>
+            <div class="info-title-component">15e3</div>
+            <div class="info-title-component">9s4kj5aoa.234</div>
         </div>
         <div id="info-area">
             <div class="info-element">
@@ -133,25 +134,40 @@
             while (ele.children.length != 0)
                 ele.children[0].remove();
 
-            if (info.elements == null)
-                return;
-            for (var i = 0; i < info.elements.length; i++) {
-                var e = document.createElement("div");
-                e.classList.add("info-element");
-                if (info.elements[i].title != null) {
-                    var e1 = document.createElement("div");
-                    e1.classList.add("info-element-title");
-                    e1.innerHTML = info.elements[i].title;
-                    e.appendChild(e1);
+            if (info.elements != null)
+                for (var i = 0; i < info.elements.length; i++) {
+                    var e = document.createElement("div");
+                    e.classList.add("info-element");
+                    if (info.elements[i].title != null) {
+                        var e1 = document.createElement("div");
+                        e1.classList.add("info-element-title");
+                        e1.innerHTML = info.elements[i].title;
+                        e.appendChild(e1);
+                    }
+                    if (info.elements[i].description != null) {
+                        var e1 = document.createElement("div");
+                        e1.classList.add("info-element-component");
+                        e1.innerHTML = info.elements[i].description;
+                        e.appendChild(e1);
+                    }
+                    ele.appendChild(e);
                 }
-                if (info.elements[i].description != null) {
-                    var e1 = document.createElement("div");
-                    e1.classList.add("info-element-component");
-                    e1.innerHTML = info.elements[i].description;
-                    e.appendChild(e1);
+
+            ele = document.getElementById("info-title");
+            while (ele.children.length != 0)
+                ele.children[0].remove();
+
+            if (info.info != null)
+                for (var i = 0; i < info.info.length; i++) {
+                    if (info.info[i].value != null) {
+                        var e = document.createElement("div");
+                        e.classList.add("info-title-component");
+                        e.innerHTML = info.info[i].value;
+                        if (info.info[i].label != null)
+                            e.title = info.info[i].label;
+                        ele.appendChild(e);
+                    }
                 }
-                ele.appendChild(e);
-            }
         }
     </script>
 </body>
