@@ -94,7 +94,7 @@ html, body {
 #info-title {
     font-size: 25px;
     margin-bottom: .5%;
-    width: 79%;
+    width: 90%;
     padding-left: .5%;
 }
 
@@ -115,7 +115,7 @@ html, body {
     background: #282828;
     padding: .5% 1.5% .5% 1.5%;
     margin-bottom: .5%;
-    width: 77%;
+    width: 90%;
 }
 
 .info-element-title {
@@ -133,16 +133,6 @@ html, body {
     display: inline-block;
     padding-left: 3%;
     font-style: italic;
-}
-
-#credits {
-    position: absolute;
-    display: inline-block;
-    background-color: #282828;
-    color: #e5e5e5;
-    right:0px;
-    width: 18%;
-    padding:1%;
 }
 
 
