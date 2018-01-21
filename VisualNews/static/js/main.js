@@ -116,6 +116,25 @@ function display(data) {
 	  } ],
 	  "marginLeft": 46,
 	  "marginBottom": 35,
+		"listeners": [{
+			"event": "clickGraphItem",
+	    "method": function(event) {
+				var id = event.item.dataContext._id
+				console.log(id);
+				request_args = {
+					"_id": id,
+					"cluster_name": event.item.dataContext.cluster_name
+				}
+
+				$.get("get-cluster-data", request_args, function (data, status) {
+					if (status === 'success') {
+					    console.log(data);
+					} else {
+					  	console.log("response was not 200");
+					}
+				});
+	    }
+		}],
 	  "export": {
 	    "enabled": true
 	  }
