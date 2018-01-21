@@ -136,7 +136,8 @@ function display(data) {
 	    "valueField": "value",
 	    "xField": "x",
 	    "yField": "y",
-	    "maxBulletSize": 100
+			"maxBulletSize": 100,
+			"colorField": "color"
 	  }, {
 	    "balloonText": "x:<b>[[x]]</b> y:<b>[[y]]</b><br>value:<b>[[value]]</b>",
 	    "bullet": "circle",
