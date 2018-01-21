@@ -23,8 +23,8 @@
     <div id="chartdiv" style="width:80%;height:500px;"></div>
     <div id="settings">
         <div id="settings-heading">Settings</div>
-        <div class="setting">
-            <div class="setting-text" id="start-time">Start Time:</div>
+        <div class="setting" id="start-time">
+            <div class="setting-text">Start Time:</div>
             <div class="setting-value">0</div>
             <input type="range" min="-24" max="0" value="0" class="slider" id="slider-time-begin" oninput="updateSettingValue(this)" onchange="sendForm(this)">
         </div>
@@ -35,8 +35,8 @@
         </div>
         <div class="setting">
             <div class="setting-text">Amount:</div>
-            <div class="setting-value">20</div>
-            <input type="range" min="0" max="30" value="20" class="slider" id="slider-time-end" oninput="updateSettingValue(this)" onchange="sendForm(this)">
+            <div class="setting-value">30</div>
+            <input type="range" min="0" max="100" value="30" class="slider" id="slider-time-end" oninput="updateSettingValue(this)" onchange="sendForm(this)">
         </div>
         <div class="setting">
             <div class="setting-text">x-axis:</div>
@@ -89,19 +89,25 @@
             i = index[i];
             options[i] = ele.value;
             if (i == "x-axis")
-                updateXAxis(i.substring(0, i.length - 1));
+                updateXAxis(ele.selectedOptions[0].innerHTML);
             if (i == "y-axis")
-                updateYAxis(i);
+                updateYAxis(ele.selectedOptions[0].innerHTML);
             if (i == "start_time") {
                 var e = document.getElementById("end-time");
-                if (ele.value > e.children[1].innerHTML)
+                console.log('–––––––' + e);
+                if (ele.value > parseInt(e.children[1].innerHTML)) {
                     e.children[1].innerHTML = ele.value;
+                    e.children[2].value = ele.value;
+                }
                 e.children[2].min = ele.value;
             }
             if (i == "end_time") {
                 var e = document.getElementById("start-time");
-                if (ele.value < e.children[1].innerHTML)
+                console.log('–––––––' + e);
+                if (ele.value < parseInt(e.children[1].innerHTML)) {
                     e.children[1].innerHTML = ele.value;
+                    e.children[2].value = ele.value;
+                }
                 e.children[2].max = ele.value;
             }
 
