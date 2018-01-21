@@ -38,13 +38,40 @@
             <div class="setting-value">20</div>
             <input type="range" min="0" max="30" value="20" class="slider" id="slider-time-end" oninput="updateSettingValue(this)" onchange="sendForm(this)">
         </div>
-        <div class="setting">
+<!--         <div class="setting">
             <div class="setting-text">Reddit Only:</div>
             <input type="checkbox" style="float:right;" onchange="sendForm(this)">
         </div>
         <div class="setting">
             <div class="setting-text">Twitter Only:</div>
             <input type="checkbox" style="float:right;" onchange="sendForm(this)">
+        </div> -->
+        <div class="setting">
+            <div class="setting-text">x-axis:</div>
+            <select name="x-axis" style="float:right;" onchange="sendForm(this)">
+                <option value="time" selected>Time</option>
+                <option value="reddit_sentiment">Reddit Sentiment</option>
+                <option value="twitter_sentiment">Twitter Sentiment</option>
+                <option value="cluster_size">Cluster Size</option>
+            </select>
+        </div>
+        <div class="setting">
+            <div class="setting-text">y-axis:</div>
+            <select name="y-axis" style="float:right;" onchange="sendForm(this)">
+                <option value="time">Time</option>
+                <option value="reddit_sentiment" selected>Reddit Sentiment</option>
+                <option value="twitter_sentiment">Twitter Sentiment</option>
+                <option value="cluster_size">Cluster Size</option>
+            </select>
+        </div>
+        <div class="setting">
+            <div class="setting-text">Size:</div>
+            <select name="size" style="float:right;" onchange="sendForm(this)">
+                <option value="time">Time</option>
+                <option value="reddit_sentiment">Reddit Sentiment</option>
+                <option value="twitter_sentiment">Twitter Sentiment</option>
+                <option value="cluster_size" selected>Cluster Size</option>
+            </select>
         </div>
     </div>
     <div id="details" style="width:100%;background:blue;" onchange="sendForm(this)"></div>
@@ -56,13 +83,15 @@
 
         function sendForm(ele) {
             var index = {
-                "Start Time:": "begin",
-                "End Time:": "end",
-                "Amount:": "clusters",
-                "Reddit Only:": "reddit",
-                "Twitter Only:": "twitter"
+                "Start Time:": "start_time",
+                "End Time:": "end_time",
+                "Amount:": "num_clusters",
+                "x-axis:": "x-axis",
+                "y-axis:": "y-axis",
+                "Size:": "value"
             };
             data[index[ele.parentNode.children[0].innerHTML]] = ele.value;
+            console.log(ele.value);
             console.log(data);
             load();
         }
