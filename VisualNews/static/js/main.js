@@ -54,14 +54,12 @@ function setup() {
 	    "value2": 16
 	  } ]);*/
 	data = {
-		"clusters": 20,
-		"begin": 1,
-		"end": 100,
-		"reddit": false,
-		"twitter": false,
-		"x": "time",
-		"y": "popularity", // popularity is reddit + twitter
-		"value": "size",
+		"num_clusters": 20,
+		"start_time": 1,
+		"end_time": 100,
+		"x-axis": "time",
+		"y-axis": "reddit_sentiment", // popularity is reddit + twitter
+		"value": "cluster_size",
 	};
 	arr = [];
 	for (var i = 0; i < 50; i++)
