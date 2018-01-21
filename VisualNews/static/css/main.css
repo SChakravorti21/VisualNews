@@ -133,3 +133,9 @@ html, body {
     padding-left: 3%;
     font-style: italic;
 }
+
+#credits {
+    position: relative;
+    display: inline-block;
+    background-color: blue;
+}
