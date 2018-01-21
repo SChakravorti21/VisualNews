@@ -159,17 +159,17 @@ function display(data) {
 								info.elements.push({title: s1, description: s2, url: data.links[i]});
 							}
 						// TODO format values
-						if (data.date != null)
-							info.info.push({label: "date", value: data.date});
+						// if (data.date != null)
+						// 	info.info.push({label: "date", value: data.date});
 						if (data.cluster_size != null)
-							info.info.push({label: "cluster size", value: data.cluster_size});
+							info.info.push({label: "cluster size", value: "Size: " + data.cluster_size});
 						if (data.reddit_sentiment != null)
-							info.info.push({label: "reddit sentiment", value: data.reddit_sentiment});
+							info.info.push({label: "reddit sentiment", value: "Reddit: " + data.reddit_sentiment});
 						if (data.twitter_sentiment != null)
-							info.info.push({label: "twitter sentiment", value: data.twitter_sentiment});
+							info.info.push({label: "twitter sentiment", value: "Twitter: " + data.twitter_sentiment});
 						if (data.labels != null) {
-							var str = "";
-							for (var i = 0; i < data.labels.length; i++)
+							var str = "Tags: ";
+							for (var i = 0; i < 5; i++) // show first 5 tags
 								str += data.labels[i] + ", ";
 							if (str.length != 0) {
 								str.substring(0, str.length - 2);
