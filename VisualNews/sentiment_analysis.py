@@ -65,6 +65,8 @@ def analyze_twitter_sentiment(kwds):
         total = total + vs['compound'] * multiplier
         count += 1
 
+    if count == 0.0:
+        return 0
     print("{} / {} = {}".format(total, count, float(total / count)))
     return float(total / count)
 
@@ -117,7 +119,7 @@ def analyze_reddit_sentiment(kwds):
                 total += vs['compound'] * multiplier
                 count += 1
 
-    if total == 0.0:
+    if total == 0.0 || count == 0.0:
         print("none")
         return None
     else:

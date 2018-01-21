@@ -1,11 +1,14 @@
 from flask import Flask, Blueprint, request, json
 import datetime
 from pprint import pprint
+from faker import Factory
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 mod = Blueprint('data', __name__)
+
+fake = Factory.create()
 
 @mod.route('/request-data/', methods=['GET', 'POST'])
 def get_clusters():
@@ -39,12 +42,14 @@ def get_clusters():
 
     cursor = cluster_collection.find({})
     for doc in cursor:
+        
         clusters.append({
             "cluster_name": cluster_name,
             "_id": str(doc["_id"]),
             "y": doc[y_axis],
             "x": doc[x_axis],
-            "value": doc[value]
+            "value": doc[value],
+            "color": fake.hex_color()
         })
 
     while start_time != end_time:
@@ -59,7 +64,8 @@ def get_clusters():
                 "_id": str(doc["_id"]),
                 "y": doc[y_axis],
                 "x": doc[x_axis],
-                "value": doc[value]
+                "value": doc[value],
+                "color": fake.hex_color()
             })
 
     return json.dumps(clusters)
