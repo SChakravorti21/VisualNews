@@ -1,6 +1,6 @@
 var chart;
 var arr;
-var data;
+var options;
 
 function setup() {
   /*[ {
@@ -53,17 +53,17 @@ function setup() {
 	    "x2": -3,
 	    "value2": 16
 	  } ]);*/
-	data = {
+	options = {
 		"num_clusters": 20,
-		"start_time": 1,
-		"end_time": 100,
-		"x-axis": "time",
+		"start_time": 0,
+		"end_time": 0,
+		"x-axis": "date",
 		"y-axis": "reddit_sentiment", // popularity is reddit + twitter
 		"value": "cluster_size",
 	};
 	arr = [];
 	for (var i = 0; i < 50; i++)
-		arr.push({y: Math.random(), x: Math.random(), value: Math.random()}); 
+		arr.push({y: Math.random(), x: Math.random(), value: Math.random()});
 	display(arr);
 }
 
@@ -79,10 +79,10 @@ function display(data) {
 	  	"fixedPosition":true,
 	  },
 		// "dataLoader": {
-	 //    "url": "data.json",
-	 //    "format": "json"
-  // 	},
-  	"dataProvider": arr,
+	  //   "url": "data.json",
+	  //   "format": "json"
+  	// },
+  	"dataProvider": null,
 	  "valueAxes": [ {
 	    "position": "bottom",
 	    "axisAlpha": 0
@@ -116,17 +116,64 @@ function display(data) {
 	  } ],
 	  "marginLeft": 46,
 	  "marginBottom": 35,
+		"listeners": [{
+			"event": "clickGraphItem",
+	    "method": function(event) {
+				var id = event.item.dataContext._id
+				console.log(id);
+				request_args = {
+					"_id": id,
+					"cluster_name": event.item.dataContext.cluster_name
+				}
+
+				$.get("get-cluster-data", request_args, function (data, status) {
+					if (status === 'success') {
+						var info = {title:"", info:[], elements:[]};
+						if (data.articles != null)
+							for (var i = 0; i < data.articles.length; i++) {
+								elements.push({title:data.articles[i], url: data.links[i]});
+								// TODO split title into title and description
+							}
+						if (data.date != null)
+							info.info.push({label: "date", value: data.date});
+						if (data.cluster_size != null)
+							info.info.push({label: "cluster size", value: data.cluster_size});
+						if (data.reddit_sentiment != null)
+							info.info.push({label: "reddit sentiment", value: data.reddit_sentiment});
+						if (data.twitter_sentiment != null)
+							info.info.push({label: "twitter sentiment", value: data.twitter_sentiment});
+						if (data.labels != null) {
+							var str = "";
+							for (var i = 0; i < data.labels.length; i++)
+								str += data.labels[i] + ", ";
+							if (str.length != 0) {
+								str.substring(0, str.length - 2);
+								info.info.push({label: "tags", value: str});
+							}
+						}
+						console.log("--- get cluster data: ---");
+						console.log(info);
+						displayInfo(info);
+					} else {
+					  	console.log("response was not 200");
+					}
+				});
+	    }
+		}],
 	  "export": {
 	    "enabled": true
 	  }
 	});
+
+	load()
 }
 
 function load() {
-	$.getJSON("request-data", data, function (data, status) {
-		if (status === 200) {
+	$.get("request-data", options, function (data, status) {
+		if (status === 'success') {
 		    console.log(data);
 		    chart.dataProvider = AmCharts.parseJSON(data);
+
 		} else {
 		  	console.log("response was not 200");
 		}

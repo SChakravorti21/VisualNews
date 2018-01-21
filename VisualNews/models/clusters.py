@@ -13,18 +13,20 @@ import dateutil.parser as dp
 
 class Cluster():
     def __init__(self, labels=[], articles=[], twitter_sentiment=0.0,
-            reddit_sentiment=0.0, cluster_size=0):
+            reddit_sentiment=0.0, cluster_size=0, links=[]):
         self.labels = labels
         self.articles = articles
         self.twitter_sentiment = twitter_sentiment
         self.reddit_sentiment = reddit_sentiment
         self.cluster_size = cluster_size
         self.date = datetime.now()
+        self.links = links
 
     def json(self):
         return {
             "labels": self.labels,
             "articles": self.articles,
+            "links": self.links,
             "twitter_sentiment": self.twitter_sentiment,
             "reddit_sentiment": self.reddit_sentiment,
             "cluster_size": self.cluster_size,
@@ -144,18 +146,22 @@ class Cluster():
             # Get the relevant date for the cluster
             t0 = time()
             date = None
+            doc_links = []
             for article in cluster.articles:
                 split = article.split(' –– ')
                 title = split[0]
                 description = split[1]
                 # print('Title: {}; Description: {}'.format(title, description))
                 doc = articles_collection.find_one({'title': title, 'description': description})
+                doc_links.append(doc['url'])
                 parsed_time = dp.parse(doc['date'])
                 in_seconds = parsed_time.strftime('%s')
 
                 if date == None or in_seconds < date:
                     date = in_seconds
+
             cluster.date = date
+            cluster.links = doc_links
 
             print('Set cluster time in %fs' % (time() - t0))
 
