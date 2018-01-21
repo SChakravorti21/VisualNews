@@ -96,9 +96,9 @@
             var i = index[ele.parentNode.children[0].innerHTML];
             options[i] = ele.value;
             if (i == "x-axis")
-                updateXAxis(ele.value);
+                updateXAxis(i);
             id (i == "y-axis")
-                updateYAxis(ele.value);
+                updateYAxis(i);
             load();
         }
 
