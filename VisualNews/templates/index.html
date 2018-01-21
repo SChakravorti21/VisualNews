@@ -93,9 +93,12 @@
                 "y-axis:": "y-axis",
                 "Size:": "value"
             };
-            options[index[ele.parentNode.children[0].innerHTML]] = ele.value;
-            console.log(ele.value);
-            console.log(options);
+            var i = index[ele.parentNode.children[0].innerHTML];
+            options[i] = ele.value;
+            if (i == "x-axis")
+                updateXAxis(ele.value);
+            id (i == "y-axis")
+                updateYAxis(ele.value);
             load();
         }
 
