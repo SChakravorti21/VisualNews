@@ -149,10 +149,8 @@ function display(data) {
 								console.log(s1);
 								console.log(s2);
 								info.elements.push({title: s1, description: s2, url: data.links[i]});
-
-
-								// TODO split title into title and description
 							}
+						// TODO format values
 						if (data.date != null)
 							info.info.push({label: "date", value: data.date});
 						if (data.cluster_size != null)
