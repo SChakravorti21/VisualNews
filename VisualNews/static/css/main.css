@@ -96,10 +96,11 @@ html, body {
     margin-bottom: .5%;
     width: 90%;
     padding-left: .5%;
+    margin: auto;
 }
 
 .info-title-component {
-    font-size: 15px;
+    font-size: 13px;
     text-decoration: none;
     display:inline-block;
     border: 1px solid #bcbcbc;
@@ -116,6 +117,7 @@ html, body {
     padding: .5% 1.5% .5% 1.5%;
     margin-bottom: .5%;
     width: 90%;
+    margin: auto;
 }
 
 .info-element-title {
