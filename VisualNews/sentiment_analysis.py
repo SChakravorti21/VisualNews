@@ -2,16 +2,6 @@ import twitter, praw
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-api = twitter.Api(consumer_key="KNMAMu8mH1EufzO2pwD7Erhkd",
-                    consumer_secret="SKkCvIpVpuSBpyX0jwhRCBAffyqturk2OUFIvYKZL49wonf9LK",
-                    access_token_key="2675842215-wx3eCPrPahmVlJIeticgmuUTVEtInvE9oRee5QM",
-                    access_token_secret="GVN0k87OQvgGQwPVbLNsXbqX779FlhVKJU5H5vD51DWSF")
-
-reddit = praw.Reddit(client_id='fXu6e5Ofuroemg',
-                     client_secret='lEX8uGB1KHR3peMRql9BUHw9sKY',
-                     password='tdE-DQG-Pe2-bLZ',
-                     user_agent='sentimentbot for newsvisualizer',
-                     username='articlesentimentbot')
 news = reddit.subreddit('news')
 
 analyzer = SentimentIntensityAnalyzer()
